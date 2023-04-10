@@ -22,7 +22,7 @@ async function getAddressFromCEP(cep: string) : Promise<ViaCEPAddress> {
     uf: result.data.uf
   };
 
-  if (!result.data) {
+  if (result.data.erro || result.status === 400) {
     throw notFoundError();
   }
 
@@ -56,9 +56,10 @@ type GetAddressResult = Omit<Address, 'createdAt' | 'updatedAt' | 'enrollmentId'
 async function createOrUpdateEnrollmentWithAddress(params: CreateOrUpdateEnrollmentWithAddress) {
   const enrollment = exclude(params, 'address');
   const address = getAddressForUpsert(params.address);
-  const result = await getAddressFromCEP(address.cep);
 
-  if (!result) {
+  try {
+    await getAddressFromCEP(address.cep);
+  } catch {
     throw notFoundError();
   }
 
