@@ -27,3 +27,23 @@ export type RequestError = {
   name: string;
   message: string;
 };
+
+export type Ticket = {
+  id: number;
+  status: string; //RESERVED | PAID
+  ticketTypeId: number;
+  enrollmentId: number;
+  TicketType: TicketType;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type TicketType = {
+  id: number;
+  name: string;
+  price: number;
+  isRemote: boolean;
+  includesHotel: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
