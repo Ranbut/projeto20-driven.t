@@ -18,14 +18,18 @@ async function getPayment(ticketId: number, userId: number): Promise<Payment> {
   return payment;
 }
 
-async function processPayment(body: ProcessPaymentWithBody) {
+async function processPayment(body: ProcessPaymentWithBody, userId: number): Promise<Payment> {
   if (!body.cardData || !body.ticketId)
     throw invalidDataError(['Body data is incorrect. Verify if is', 'Incorrect ticketId', 'Incorrect cardData']);
 
-  const payment = await paymentsRepository.getUserPayment(body.ticketId);
-  if (!payment) throw notFoundError();
+  const ticket = await ticketsRepository.getUserTicket(userId);
+  if (!ticket) throw notFoundError();
 
-  const paymentProcess = await paymentsRepository.processUserPayment(body);
+  if (userId !== ticket.enrollmentId) throw unauthorizedError();
+
+  const paymentProcess = await paymentsRepository.processUserPayment(body, ticket.TicketType.price);
+
+  await ticketsRepository.createUserTicket(ticket.ticketTypeId, ticket.enrollmentId, 'PAID', ticket.id);
 
   return paymentProcess;
 }

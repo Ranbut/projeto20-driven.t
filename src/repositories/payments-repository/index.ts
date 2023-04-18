@@ -10,11 +10,11 @@ async function getUserPayment(ticketId: number): Promise<Payment> {
   });
 }
 
-async function processUserPayment(data: ProcessPaymentWithBody) {
+async function processUserPayment(data: ProcessPaymentWithBody, value: number): Promise<Payment> {
   return prisma.payment.create({
     data: {
       ticketId: data.ticketId,
-      value: data.ticketId,
+      value: value,
       cardIssuer: data.cardData.issuer,
       cardLastDigits: data.cardData.cvv as unknown as string,
     },

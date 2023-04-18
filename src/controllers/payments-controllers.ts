@@ -12,6 +12,9 @@ export async function getPayment(req: AuthenticatedRequest, res: Response) {
 
     return res.status(httpStatus.OK).send(payment);
   } catch (error) {
+    if (error.name === 'UnauthorizedError') {
+      return res.send(httpStatus.UNAUTHORIZED);
+    }
     if (error.name === 'InvalidDataError') {
       return res.send(httpStatus.BAD_REQUEST);
     }
@@ -22,11 +25,18 @@ export async function getPayment(req: AuthenticatedRequest, res: Response) {
 }
 
 export async function processPayment(req: AuthenticatedRequest, res: Response) {
+  const userId = req.userId as number;
+
   try {
-    const paymentConfirmation = await paymentsService.processPayment({ ...req.body });
+    const paymentConfirmation = await paymentsService.processPayment({ ...req.body }, userId);
 
     return res.sendStatus(httpStatus.OK).send(paymentConfirmation);
   } catch (error) {
-    return res.sendStatus(httpStatus.BAD_REQUEST);
+    if (error.name === 'InvalidDataError') {
+      return res.send(httpStatus.BAD_REQUEST);
+    }
+    if (error.name === 'NotFoundError') {
+      return res.send(httpStatus.NOT_FOUND);
+    }
   }
 }
