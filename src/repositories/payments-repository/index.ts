@@ -1,7 +1,8 @@
+import { Payment } from '@prisma/client';
 import { prisma } from '@/config';
 import { ProcessPaymentWithBody } from '@/protocols';
 
-async function getUserPayment(ticketId: number) {
+async function getUserPayment(ticketId: number): Promise<Payment> {
   return prisma.payment.findFirst({
     where: {
       ticketId: ticketId,

@@ -1,13 +1,16 @@
+import { Payment } from '@prisma/client';
 import { invalidDataError, notFoundError, unauthorizedError } from '@/errors';
 import { ProcessPaymentWithBody } from '@/protocols';
 import paymentsRepository from '@/repositories/payments-repository';
 import ticketsRepository from '@/repositories/tickets-repository';
 
-async function getPayment(ticketId: number, userId: number) {
+async function getPayment(ticketId: number, userId: number): Promise<Payment> {
   if (!ticketId) throw invalidDataError(['Ticket ID not given']);
 
-  const user = await ticketsRepository.findByID(userId);
-  if (!user) throw unauthorizedError();
+  const ticket = await ticketsRepository.getUserTicket(userId);
+  if (!ticket) throw notFoundError();
+
+  if (userId !== ticket.enrollmentId) throw unauthorizedError();
 
   const payment = await paymentsRepository.getUserPayment(ticketId);
   if (!payment) throw notFoundError();
