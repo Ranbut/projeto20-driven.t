@@ -12,7 +12,12 @@ export async function getPayment(req: AuthenticatedRequest, res: Response) {
 
     return res.status(httpStatus.OK).send(payment);
   } catch (error) {
-    return res.sendStatus(httpStatus.NO_CONTENT);
+    if (error.name === 'InvalidDataError') {
+      return res.send(httpStatus.BAD_REQUEST);
+    }
+    if (error.name === 'NotFoundError') {
+      return res.send(httpStatus.NOT_FOUND);
+    }
   }
 }
 
