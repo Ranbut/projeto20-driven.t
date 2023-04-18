@@ -10,11 +10,12 @@ export async function getTicketsTypes(): Promise<TicketType[]> {
   return ticketTypes;
 }
 
-async function getAllUserTickets(userId: number): Promise<Ticket[]> {
-  const enrollmentExist = await enrollmentRepository.findWithAddressByUserId(userId);
-  if (!enrollmentExist) throw notFoundError();
+async function getUserTicket(userId: number): Promise<Ticket> {
+  const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
+  if (!enrollment) throw notFoundError();
 
-  const tickets = await ticketsRepository.getAllUserTickets(userId);
+  const tickets = await ticketsRepository.getUserTicket(enrollment.id);
+  if (!tickets) throw notFoundError();
 
   return tickets;
 }
@@ -30,7 +31,7 @@ async function createNewTicket(userId: number, ticketTypeId: number): Promise<Ti
 
 const ticketService = {
   getTicketsTypes,
-  getAllUserTickets,
+  getUserTicket,
   createNewTicket,
 };
 

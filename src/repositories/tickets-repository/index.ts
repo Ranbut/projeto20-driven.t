@@ -11,9 +11,13 @@ async function getAllTypes(): Promise<TicketType[]> {
   return prisma.ticketType.findMany();
 }
 
-async function getAllUserTickets(userId: number): Promise<Ticket[]> {
-  return prisma.ticket.findMany({
+async function getUserTicket(userId: number): Promise<Ticket> {
+  return prisma.ticket.findFirst({
     where: { id: userId },
+    include: {
+      Enrollment: true,
+      TicketType: true,
+    },
   });
 }
 
@@ -33,7 +37,7 @@ async function createUserTicket(ticketTypeId: number, enrollmentId: number, stat
 const eventRepository = {
   findByID,
   getAllTypes,
-  getAllUserTickets,
+  getUserTicket,
   createUserTicket,
 };
 
