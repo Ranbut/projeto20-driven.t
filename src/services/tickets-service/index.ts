@@ -11,6 +11,9 @@ export async function getTicketsTypes(): Promise<TicketType[]> {
 }
 
 async function getAllUserTickets(userId: number): Promise<Ticket[]> {
+  const enrollmentExist = await enrollmentRepository.findWithAddressByUserId(userId);
+  if (!enrollmentExist) throw notFoundError();
+
   const tickets = await ticketsRepository.getAllUserTickets(userId);
 
   return tickets;
