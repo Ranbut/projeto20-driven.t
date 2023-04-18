@@ -47,3 +47,19 @@ export type TicketType = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type ProcessPaymentWithBody = {
+  ticketId: number;
+  cardData: {
+    issuer: string;
+    number: number;
+    name: string;
+    expirationDate: Date;
+    cvv: number;
+  };
+};
+
+export type TicketStatus = {
+  RESERVED: 'RESERVED';
+  PAID: 'PAID';
+};

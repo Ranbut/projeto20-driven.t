@@ -1,5 +1,5 @@
 import Joi from 'joi';
 
-export const createEnrollmentSchema = Joi.object({
+export const createTicketSchema = Joi.object({
   ticketTypeId: Joi.number().required(),
 });
