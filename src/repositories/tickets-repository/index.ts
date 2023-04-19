@@ -1,49 +1,64 @@
-import { Enrollment, Ticket, TicketStatus, TicketType } from '@prisma/client';
+import { Ticket, TicketStatus, TicketType } from '@prisma/client';
 import { prisma } from '@/config';
+import { CreateTicketParams } from '@/protocols';
 
-async function findByID(userId: number) {
-  return prisma.user.findMany({
-    where: { id: userId },
-  });
-}
-
-async function getAllTypes(): Promise<TicketType[]> {
+async function findTicketTypes(): Promise<TicketType[]> {
   return prisma.ticketType.findMany();
 }
 
-async function getUserTicket(userId: number): Promise<Ticket & { Enrollment: Enrollment; TicketType: TicketType }> {
+async function findTicketByEnrollmentId(enrollmentId: number): Promise<Ticket> {
   return prisma.ticket.findFirst({
-    where: { id: userId },
+    where: { enrollmentId },
+    include: {
+      TicketType: true, //join
+    },
+  });
+}
+
+async function createTicket(ticket: CreateTicketParams): Promise<Ticket> {
+  return prisma.ticket.create({
+    data: ticket,
+  });
+}
+
+async function findTickeyById(ticketId: number): Promise<Ticket> {
+  return prisma.ticket.findFirst({
+    where: {
+      id: ticketId,
+    },
     include: {
       Enrollment: true,
+    },
+  });
+}
+
+async function findTickeWithTypeById(ticketId: number): Promise<Ticket & { TicketType: TicketType }> {
+  return prisma.ticket.findFirst({
+    where: {
+      id: ticketId,
+    },
+    include: {
       TicketType: true,
     },
   });
 }
 
-async function createUserTicket(
-  ticketTypeId: number,
-  enrollmentId: number,
-  status: TicketStatus,
-  ticketId: number,
-): Promise<Ticket> {
-  return prisma.ticket.upsert({
-    where: { id: ticketId },
-    create: {
-      ticketTypeId,
-      enrollmentId,
-      status,
+async function ticketProcessPayment(ticketId: number): Promise<Ticket> {
+  return prisma.ticket.update({
+    where: {
+      id: ticketId,
     },
-    update: { status },
-    include: { TicketType: true },
+    data: {
+      status: TicketStatus.PAID,
+    },
   });
 }
 
-const eventRepository = {
-  findByID,
-  getAllTypes,
-  getUserTicket,
-  createUserTicket,
+export default {
+  findTicketTypes,
+  findTicketByEnrollmentId,
+  createTicket,
+  findTickeyById,
+  findTickeWithTypeById,
+  ticketProcessPayment,
 };
-
-export default eventRepository;

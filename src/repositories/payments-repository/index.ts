@@ -1,29 +1,21 @@
-import { Payment } from '@prisma/client';
 import { prisma } from '@/config';
-import { ProcessPaymentWithBody } from '@/protocols';
+import { PaymentParams } from '@/protocols';
 
-async function getUserPayment(ticketId: number): Promise<Payment> {
+async function findPaymentByTicketId(ticketId: number) {
   return prisma.payment.findFirst({
     where: {
-      ticketId: ticketId,
+      ticketId,
     },
   });
 }
 
-async function processUserPayment(data: ProcessPaymentWithBody, value: number): Promise<Payment> {
+async function createPayment(ticketId: number, params: PaymentParams) {
   return prisma.payment.create({
     data: {
-      ticketId: data.ticketId,
-      value: value,
-      cardIssuer: data.cardData.issuer,
-      cardLastDigits: data.cardData.cvv as unknown as string,
+      ticketId,
+      ...params,
     },
   });
 }
 
-const eventRepository = {
-  getUserPayment,
-  processUserPayment,
-};
-
-export default eventRepository;
+export default { findPaymentByTicketId, createPayment };
