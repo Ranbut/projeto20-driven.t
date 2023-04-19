@@ -1,4 +1,4 @@
-import { Hotel } from '@prisma/client';
+import { Hotel, Room } from '@prisma/client';
 import hotelsRepository from '@/repositories/hotels-repository';
 
 async function getHotels(): Promise<Hotel[]> {
@@ -7,7 +7,7 @@ async function getHotels(): Promise<Hotel[]> {
   return hotels;
 }
 
-async function getHotelRooms(hotelId: number): Promise<Hotel[]> {
+async function getHotelRooms(hotelId: number): Promise<Room[]> {
   const rooms = await hotelsRepository.findHotelRooms(hotelId);
 
   return rooms;
