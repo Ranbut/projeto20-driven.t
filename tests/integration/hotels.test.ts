@@ -7,6 +7,7 @@ import {
   createEnrollmentWithAddress,
   createTicket,
   createTicketType,
+  createTicketTypeHotel,
   createTicketTypeRemote,
   createUser,
 } from '../factories';
@@ -56,16 +57,24 @@ describe('GET /hotels', () => {
       expect(response.status).toBe(httpStatus.NOT_FOUND);
     });
 
-    it('should respond with status 402 if ticket was not paid', async () => {
+    it('should respond with status 402 when ticket not include hotel', async () => {
       const user = await createUser();
       const token = await generateValidToken(user);
       const enrollment = await createEnrollmentWithAddress(user);
-      const ticketType = await createTicketType();
+      const ticketType = await createTicketTypeHotel();
       await createTicket(enrollment.id, ticketType.id, TicketStatus.RESERVED);
 
       const response = await server.get('/hotels').set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(httpStatus.PAYMENT_REQUIRED);
+    });
+
+    it('should respond with status 404 if enrollment does not exist', async () => {
+      const token = await generateValidToken();
+
+      const response = await server.get('/hotels').set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toEqual(httpStatus.NOT_FOUND);
     });
 
     it('should respond with status 402 if ticket is remote', async () => {
