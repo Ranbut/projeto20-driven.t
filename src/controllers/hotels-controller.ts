@@ -30,7 +30,7 @@ export async function getHotelRooms(req: AuthenticatedRequest, res: Response) {
     res.status(httpStatus.OK).send(hotelRooms);
   } catch (error) {
     if (error.name === 'NotFoundError') {
-      return res.send(httpStatus.NO_CONTENT);
+      return res.send(httpStatus.NOT_FOUND);
     }
     if (error.name === 'PaymentError') {
       return res.send(httpStatus.PAYMENT_REQUIRED);

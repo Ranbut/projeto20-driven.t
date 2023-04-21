@@ -22,7 +22,7 @@ async function getHotels(userId: number): Promise<Hotel[]> {
   return hotels;
 }
 
-async function getHotelRooms(userId: number, hotelId: number): Promise<Room[]> {
+async function getHotelRooms(userId: number, hotelId: number): Promise<Hotel & { Rooms: Room[] }> {
   const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
   if (!enrollment) throw notFoundError();
 
@@ -35,7 +35,6 @@ async function getHotelRooms(userId: number, hotelId: number): Promise<Room[]> {
   if (ticketType.TicketType.isRemote || !ticketType.TicketType.includesHotel) throw paymentError();
 
   const rooms = await hotelsRepository.findHotelRooms(hotelId);
-  if (rooms.length === 0) throw notFoundError();
 
   return rooms;
 }
