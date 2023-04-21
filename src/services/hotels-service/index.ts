@@ -31,7 +31,11 @@ async function getHotelRooms(userId: number, hotelId: number): Promise<Room[]> {
 
   if (ticket.status !== 'PAID') throw paymentError();
 
+  const ticketType = await ticketsRepository.findTickeWithTypeById(ticket.id);
+  if (ticketType.TicketType.isRemote) throw paymentError();
+
   const rooms = await hotelsRepository.findHotelRooms(hotelId);
+  if (rooms.length === 0) throw notFoundError();
 
   return rooms;
 }
