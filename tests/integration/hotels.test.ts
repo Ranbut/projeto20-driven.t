@@ -1,7 +1,8 @@
 import httpStatus from 'http-status';
 import supertest from 'supertest';
 import faker from '@faker-js/faker';
-import { cleanDb } from '../helpers';
+import { cleanDb, generateValidToken } from '../helpers';
+import { createEnrollmentWithAddress, createUser } from '../factories';
 import app, { init } from '@/app';
 
 beforeAll(async () => {
@@ -28,11 +29,31 @@ describe('GET /hotels', () => {
 
     expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
+
+  describe('when token is valid', () => {
+    it('should respond with status 404 if enrollment does not exist', async () => {
+      const token = await generateValidToken();
+
+      const response = await server.get('/hotels').set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toEqual(httpStatus.NOT_FOUND);
+    });
+
+    it('should respond with status 404 if ticket does not exist', async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+      await createEnrollmentWithAddress(user);
+
+      const response = await server.get('/hotels').set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(httpStatus.NOT_FOUND);
+    });
+  });
 });
 
 describe('GET /hotels/:hotelId', () => {
   it('should respond with status 401 if no token is given', async () => {
-    const response = await server.post('/hotels/:hotelId');
+    const response = await server.get('/hotels/:hotelId');
 
     expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
@@ -43,5 +64,25 @@ describe('GET /hotels/:hotelId', () => {
     const response = await server.get('/hotels/:hotelId').set('Authorization', `Bearer ${token}`);
 
     expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+  });
+
+  describe('when token is valid', () => {
+    it('should respond with status 404 if enrollment does not exist', async () => {
+      const token = await generateValidToken();
+
+      const response = await server.get('/hotels').set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toEqual(httpStatus.NOT_FOUND);
+    });
+
+    it('should respond with status 404 if ticket does not exist', async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+      await createEnrollmentWithAddress(user);
+
+      const response = await server.get('/hotels').set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(httpStatus.NOT_FOUND);
+    });
   });
 });

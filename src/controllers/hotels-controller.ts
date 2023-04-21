@@ -4,20 +4,26 @@ import { AuthenticatedRequest } from '@/middlewares';
 import hotelsService from '@/services/hotels-service';
 
 export async function getHotels(req: AuthenticatedRequest, res: Response) {
+  const { userId } = req;
+
   try {
-    const hotels = await hotelsService.getHotels();
+    const hotels = await hotelsService.getHotels(userId);
 
     return res.status(httpStatus.OK).send(hotels);
   } catch (error) {
-    return res.sendStatus(httpStatus.NO_CONTENT);
+    if (error.name === 'NotFoundError') {
+      return res.sendStatus(httpStatus.NOT_FOUND);
+    }
   }
 }
 
 export async function getHotelRooms(req: AuthenticatedRequest, res: Response) {
+  const { userId } = req;
+
   const hotelId = Number(req.params.hotelId);
 
   try {
-    const hotelRooms = await hotelsService.getHotelRooms(hotelId);
+    const hotelRooms = await hotelsService.getHotelRooms(userId, hotelId);
     res.status(httpStatus.OK).send(hotelRooms);
   } catch (error) {
     if (error.name === 'NotFoundError') {
