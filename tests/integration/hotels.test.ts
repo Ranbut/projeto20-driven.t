@@ -7,7 +7,6 @@ import {
   createEnrollmentWithAddress,
   createTicket,
   createTicketType,
-  createTicketType,
   createTicketTypeHotel,
   createTicketTypeRemote,
   createUser,
