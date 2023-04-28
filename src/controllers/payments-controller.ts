@@ -12,6 +12,7 @@ export async function getPaymentByTicketId(req: AuthenticatedRequest, res: Respo
 
     const payment = await paymentsService.getPaymentByTicketId(userId, ticketId);
     if (!payment) return res.sendStatus(httpStatus.NOT_FOUND);
+
     return res.status(httpStatus.OK).send(payment);
   } catch (error) {
     if (error.name === 'UnauthorizedError') {

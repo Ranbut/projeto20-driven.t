@@ -32,13 +32,13 @@ export function handleApplicationErrors(
     });
   }
 
-  if (err.name === 'PaymentError') {
-    return res.status(httpStatus.PAYMENT_REQUIRED).send({
+  if (err.name === 'NotFoundError') {
+    return res.status(httpStatus.NOT_FOUND).send({
       message: err.message,
     });
   }
 
-  if (err.name === 'NotFoundError') {
+  if (err.name === 'CannotListHotelsError') {
     return res.status(httpStatus.NOT_FOUND).send({
       message: err.message,
     });
