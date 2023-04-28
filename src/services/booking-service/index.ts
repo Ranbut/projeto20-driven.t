@@ -3,7 +3,8 @@ import bookingRepository from '@/repositories/booking-repository';
 import { notFoundError } from '@/errors';
 
 async function getUserBooking(userId: number): Promise<Booking> {
-  const booking = bookingRepository.getFirstUserBooking(userId);
+  const booking = await bookingRepository.getFirstUserBooking(userId);
+  if (!booking) throw notFoundError();
 
   return booking;
 }
