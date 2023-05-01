@@ -28,12 +28,16 @@ export async function createBooking(req: AuthenticatedRequest, res: Response, ne
   }
 }
 
-/*export async function switchBooking(req: AuthenticatedRequest, res: Response) {
-
+export async function switchBooking(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  const { userId } = req;
+  const { roomId } = req.body;
+  const { bookingId } = req.params;
   try {
+    const booking = await bookingService.switchBooking(userId, roomId, Number(bookingId));
 
-    return res.sendStatus(httpStatus.OK);
+    return res.status(httpStatus.OK).send(booking);
   } catch (error) {
-    return res.sendStatus(httpStatus.NOT_FOUND);
+    console.log(error);
+    next(error);
   }
-}*/
+}

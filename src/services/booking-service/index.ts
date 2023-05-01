@@ -25,9 +25,9 @@ async function createBooking(userId: number, roomId: number) {
     throw ForbiddenError();
   }
 
-  const rooms = await bookingRepository.getAllBookingsByRoom(roomId);
+  const bookingsRoom = await bookingRepository.getAllBookingsByRoom(roomId);
 
-  if (rooms.length === room.capacity) throw ForbiddenError();
+  if (bookingsRoom.length >= room.capacity) throw ForbiddenError();
 
   const booking = await bookingRepository.createBooking(userId, roomId);
 
@@ -36,14 +36,28 @@ async function createBooking(userId: number, roomId: number) {
   return objReturn;
 }
 
-/*async function switchBooking() {
+async function switchBooking(userId: number, roomId: number, bookingId: number) {
+  const reservedBooking = bookingRepository.getFirstBooking(roomId);
+  if (!reservedBooking) throw ForbiddenError();
 
-}*/
+  const bookingsRoom = await bookingRepository.getAllBookingsByRoom(roomId);
+
+  const room = await bookingRepository.findHotelRooms(roomId);
+  if (!room) throw notFoundError();
+
+  if (bookingsRoom.length >= room.capacity) throw ForbiddenError();
+
+  const booking = await bookingRepository.updateBooking(userId, bookingId);
+
+  const objReturn = { bookingId: booking.id };
+
+  return objReturn;
+}
 
 const bookingService = {
   getUserBooking,
   createBooking,
-  //switchBooking,
+  switchBooking,
 };
 
 export default bookingService;
