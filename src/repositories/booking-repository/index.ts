@@ -25,10 +25,19 @@ async function createBooking(userId: number, roomId: number): Promise<Booking> {
   });
 }
 
+async function getAllBookingsByRoom(roomId: number): Promise<Booking[]> {
+  return prisma.booking.findMany({
+    where: {
+      roomId,
+    },
+  });
+}
+
 const bookingRepository = {
   getFirstUserBooking,
   findHotelRooms,
   createBooking,
+  getAllBookingsByRoom,
 };
 
 export default bookingRepository;

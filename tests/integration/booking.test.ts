@@ -170,5 +170,41 @@ describe('POST /booking', () => {
 
       expect(response.status).toBe(httpStatus.FORBIDDEN);
     });
+
+    it('should respond with status 404 if room does not exist', async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+      const enrollment = await createEnrollmentWithAddress(user);
+      const ticketType = await createTicketTypeHotel();
+      await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
+
+      await createHotel();
+
+      const response = await server.post(`/booking`).set('Authorization', `Bearer ${token}`).send({ roomId: 1 });
+
+      expect(response.status).toBe(httpStatus.NOT_FOUND);
+    });
+
+    it('should respond with status 403 when room is at full capacity', async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+      const enrollment = await createEnrollmentWithAddress(user);
+      const ticketType = await createTicketTypeHotel();
+      const ticket = await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
+      await createPayment(ticket.id, ticketType.price);
+      const createdHotel = await createHotel();
+      const createdRoom = await createRoom(createdHotel.id);
+
+      for (let i = 0; i < createdRoom.capacity; i++) {
+        await createBooking(user.id, createdRoom.id);
+      }
+
+      const response = await server
+        .post(`/booking`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({ roomId: createdRoom.id });
+
+      expect(response.status).toBe(httpStatus.FORBIDDEN);
+    });
   });
 });

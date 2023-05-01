@@ -12,6 +12,9 @@ async function getUserBooking(userId: number): Promise<Booking> {
 }
 
 async function createBooking(userId: number, roomId: number) {
+  const room = await bookingRepository.findHotelRooms(roomId);
+  if (!room) throw notFoundError();
+
   const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
   if (!enrollment) {
     throw ForbiddenError();
@@ -22,14 +25,13 @@ async function createBooking(userId: number, roomId: number) {
     throw ForbiddenError();
   }
 
+  const rooms = await bookingRepository.getAllBookingsByRoom(roomId);
+
+  if (rooms.length === room.capacity) throw ForbiddenError();
+
   const booking = await bookingRepository.createBooking(userId, roomId);
 
-  const room = await bookingRepository.findHotelRooms(roomId);
-  if (!room) throw notFoundError();
-
   const objReturn = { bookingId: booking.id };
-
-  console.log(objReturn);
 
   return objReturn;
 }
