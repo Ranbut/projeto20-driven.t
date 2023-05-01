@@ -1,4 +1,4 @@
-import { Booking, Room, User } from '@prisma/client';
+import { Booking, Room } from '@prisma/client';
 import { prisma } from '@/config';
 
 async function getFirstUserBooking(userId: number): Promise<Booking> {
@@ -44,10 +44,10 @@ async function updateBooking(userId: number, id: number): Promise<Booking> {
   });
 }
 
-async function getFirstBooking(bookingId: number): Promise<Booking & { User: User }> {
+async function getFirstBooking(bookingId: number): Promise<Booking> {
   return prisma.booking.findUnique({
     where: { id: bookingId },
-    include: { User: true },
+    include: { Room: true },
   });
 }
 

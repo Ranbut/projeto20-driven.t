@@ -238,6 +238,8 @@ describe('PUT /booking', () => {
 
       const createdBooking = await createBooking(user.id, createdRoomFirst.id);
 
+      console.log(createdBooking.roomId);
+
       const response = await server
         .put(`/booking/${createdBooking.id}`)
         .set('Authorization', `Bearer ${token}`)
@@ -265,7 +267,7 @@ describe('PUT /booking', () => {
       expect(response.status).toBe(httpStatus.NOT_FOUND);
     });
 
-    /*it('should respond with status 403 when user do not have booking', async () => {
+    it('should respond with status 403 when user do not have booking', async () => {
       const userFirst = await createUser();
       const userSecond = await createUser();
       const token = await generateValidToken(userFirst);
@@ -275,15 +277,15 @@ describe('PUT /booking', () => {
       await createPayment(ticket.id, ticketType.price);
       const createdHotel = await createHotel();
       const createdRoom = await createRoom(createdHotel.id);
-      const createdBooking = await createBooking(userSecond.id , createdRoom.id);
+      const createdBooking = await createBooking(userSecond.id, createdRoom.id);
 
       const response = await server
-      .put(`/booking/${createdBooking.id}`)
+        .put(`/booking/${createdBooking.id}`)
         .set('Authorization', `Bearer ${token}`)
         .send({ roomId: createdRoom.id });
 
       expect(response.status).toBe(httpStatus.FORBIDDEN);
-    });*/
+    });
 
     it('should respond with status 403 when room is at full capacity', async () => {
       const user = await createUser();
