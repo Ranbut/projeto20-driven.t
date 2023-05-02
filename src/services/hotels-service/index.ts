@@ -1,4 +1,4 @@
-import hotelRepository from '@/repositories/hotel-repository';
+import hotelRepository from '@/repositories/hotels-repository';
 import enrollmentRepository from '@/repositories/enrollment-repository';
 import { notFoundError } from '@/errors';
 import ticketsRepository from '@/repositories/tickets-repository';

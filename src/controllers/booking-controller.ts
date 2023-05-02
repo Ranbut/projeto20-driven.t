@@ -37,7 +37,6 @@ export async function switchBooking(req: AuthenticatedRequest, res: Response, ne
 
     return res.status(httpStatus.OK).send(booking);
   } catch (error) {
-    console.log(error);
     next(error);
   }
 }

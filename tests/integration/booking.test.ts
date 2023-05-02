@@ -238,8 +238,6 @@ describe('PUT /booking', () => {
 
       const createdBooking = await createBooking(user.id, createdRoomFirst.id);
 
-      console.log(createdBooking.roomId);
-
       const response = await server
         .put(`/booking/${createdBooking.id}`)
         .set('Authorization', `Bearer ${token}`)

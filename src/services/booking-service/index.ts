@@ -16,9 +16,6 @@ async function createBooking(userId: number, roomId: number) {
   if (!room) throw notFoundError();
 
   const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
-  if (!enrollment) {
-    throw ForbiddenError();
-  }
   const ticket = await ticketsRepository.findTicketByEnrollmentId(enrollment.id);
 
   if (!ticket || ticket.status === 'RESERVED' || ticket.TicketType.isRemote || !ticket.TicketType.includesHotel) {
@@ -47,7 +44,6 @@ async function switchBooking(userId: number, roomId: number, bookingId: number) 
   if (bookingsRoom.length >= room.capacity) throw ForbiddenError();
 
   const booking = await bookingRepository.updateBooking(bookingId, roomId);
-  if (!booking) throw notFoundError();
 
   const objReturn = { bookingId: booking.id };
 
