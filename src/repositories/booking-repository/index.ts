@@ -10,37 +10,32 @@ async function getFirstUserBooking(userId: number): Promise<Booking> {
 
 async function findHotelRooms(roomId: number): Promise<Room> {
   return prisma.room.findUnique({
-    where: {
-      id: roomId,
-    },
+    where: { id: roomId },
   });
 }
 
 async function createBooking(userId: number, roomId: number): Promise<Booking> {
   return prisma.booking.create({
-    data: {
-      userId,
-      roomId,
-    },
+    data: { userId, roomId },
+  });
+}
+
+async function getBookingById(bookingId: number) {
+  return await prisma.booking.findFirst({
+    where: { id: bookingId },
   });
 }
 
 async function getAllBookingsByRoom(roomId: number): Promise<Booking[]> {
   return prisma.booking.findMany({
-    where: {
-      roomId,
-    },
+    where: { roomId },
   });
 }
 
-async function updateBooking(userId: number, id: number): Promise<Booking> {
+async function updateBooking(bookingId: number, roomId: number): Promise<Booking> {
   return prisma.booking.update({
-    where: {
-      id,
-    },
-    data: {
-      userId,
-    },
+    where: { id: bookingId },
+    data: { roomId },
   });
 }
 
@@ -55,6 +50,7 @@ const bookingRepository = {
   getFirstUserBooking,
   findHotelRooms,
   createBooking,
+  getBookingById,
   getAllBookingsByRoom,
   updateBooking,
   getFirstBooking,
